@@ -5,11 +5,9 @@ if (!token) {
   alert('Please log in first');
   window.location.href = 'index.html';
 }
-
 async function checkAdmin() {
   try {
     const user = await apiRequest('/users/me', 'GET', null, token);
-
     if (user.role !== 'admin') {
       alert('Access allowed for admins only');
       document.body.innerHTML = `
@@ -18,7 +16,6 @@ async function checkAdmin() {
         </div>`;
       return false;
     }
-
     return true;
   } catch (e) {
     alert('User verification error');
@@ -32,37 +29,28 @@ async function loadUsers() {
   const usersDiv = document.getElementById('users');
   try {
     const users = await apiRequest('/users', 'GET', null, token);
-
     if (!users || users.length === 0) {
       usersDiv.innerHTML = '<p>No users found</p>';
       return;
     }
 
-    let html = `
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>`;
+    let html = `<table class="table table-striped">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+      </thead><tbody>`;
 
     users.forEach(u => {
-      html += `
-        <tr>
-          <td>${u.name}</td>
-          <td>${u.email}</td>
-          <td>${u.role}</td>
-          <td>
-            <button class="btn btn-danger btn-sm"
-              onclick="deleteUser('${u._id}')">
-              Delete
-            </button>
-          </td>
-        </tr>`;
+      html += `<tr>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.role}</td>
+        <td>
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteUser('${u._id}')">
+            Delete
+          </button>
+        </td>
+      </tr>`;
     });
 
     html += '</tbody></table>';
@@ -89,44 +77,30 @@ async function loadOrders() {
   const ordersDiv = document.getElementById('orders');
   try {
     const orders = await apiRequest('/orders', 'GET', null, token);
-
     if (!orders || orders.length === 0) {
       ordersDiv.innerHTML = '<p>No orders found</p>';
       return;
     }
 
-    let html = `
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>User</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>`;
+    let html = `<table class="table table-striped">
+      <thead>
+        <tr><th>Order ID</th><th>User</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+      </thead><tbody>`;
 
     orders.forEach(o => {
       const userName = o.userId?.name || o.userId || 'Unknown';
-      html += `
-        <tr>
-          <td>${o._id}</td>
-          <td>${userName}</td>
-          <td>${o.totalAmount}</td>
-          <td>${o.status}</td>
-          <td>
-            <button class="btn btn-primary btn-sm"
-              onclick="changeOrderStatus('${o._id}')">
-              Change status
-            </button>
-            <button class="btn btn-danger btn-sm"
-              onclick="deleteOrder('${o._id}')">
-              Delete
-            </button>
-          </td>
-        </tr>`;
+      html += `<tr>
+        <td>${o._id}</td>
+        <td>${userName}</td>
+        <td>${o.totalAmount}</td>
+        <td>${o.status}</td>
+        <td>
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteOrder('${o._id}')">
+            Delete
+          </button>
+        </td>
+      </tr>`;
     });
 
     html += '</tbody></table>';
@@ -135,23 +109,7 @@ async function loadOrders() {
     ordersDiv.textContent = e.message || 'Failed to load orders';
     console.error(e);
   }
-};
-
-window.changeOrderStatus = async (id) => {
-  const status = prompt(
-    'Enter new order status (pending, completed, canceled)'
-  );
-  if (!status) return;
-
-  try {
-    await apiRequest(`/orders/${id}`, 'PUT', { status }, token);
-    alert('Order status updated');
-    loadOrders();
-  } catch (e) {
-    alert(e.message || 'Error updating order status');
-    console.error(e);
-  }
-};
+}
 
 window.deleteOrder = async (id) => {
   if (!confirm('Are you sure you want to delete this order?')) return;
@@ -169,37 +127,26 @@ async function loadBooks() {
   const booksDiv = document.getElementById('books');
   try {
     const books = await apiRequest('/books', 'GET', null, token);
-
     if (!books || books.length === 0) {
       booksDiv.innerHTML = '<p>No books available</p>';
       return;
     }
 
-    let html = `
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>`;
+    let html = `<table class="table table-striped">
+      <thead><tr><th>Title</th><th>Author</th><th>Price</th><th>Actions</th></tr></thead><tbody>`;
 
     books.forEach(b => {
-      html += `
-        <tr>
-          <td>${b.title}</td>
-          <td>${b.author}</td>
-          <td>${b.price}</td>
-          <td>
-            <button class="btn btn-danger btn-sm"
-              onclick="deleteBook('${b._id}')">
-              Delete
-            </button>
-          </td>
-        </tr>`;
+      html += `<tr>
+        <td>${b.title}</td>
+        <td>${b.author}</td>
+        <td>${b.price}</td>
+        <td>
+          <button class="btn btn-danger btn-sm"
+            onclick="deleteBook('${b._id}')">
+            Delete
+          </button>
+        </td>
+      </tr>`;
     });
 
     html += '</tbody></table>';
@@ -208,7 +155,7 @@ async function loadBooks() {
     booksDiv.textContent = e.message || 'Failed to load books';
     console.error(e);
   }
-}
+};
 
 window.deleteBook = async (id) => {
   if (!confirm('Are you sure you want to delete this book?')) return;
@@ -222,46 +169,63 @@ window.deleteBook = async (id) => {
   }
 };
 
-(async () => {
-  const isAdmin = await checkAdmin();
-  if (!isAdmin) return;
+function generateId() {
+  return Math.random().toString(36).substr(2, 8);
+}
 
-  loadUsers();
-  loadOrders();
-  loadBooks();
-  loadBooksByPrice();
-})();
+document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const title = document.getElementById('bookTitle').value.trim();
+  const author = document.getElementById('bookAuthor').value.trim();
+  const price = Number(document.getElementById('bookPrice').value);
+
+  if (!title || !author || price <= 0) {
+    alert('Please fill all fields correctly');
+    return;
+  }
+
+  const newBook = {
+  _id: generateId(),
+  title,
+  author,
+  price,
+  genreId: document.getElementById('bookGenre').value.trim(),
+  stock: Number(document.getElementById('bookStock').value)
+};
+
+
+  try {
+    await apiRequest('/books', 'POST', newBook, token);
+    alert('Book added 📚');
+    e.target.reset();
+    loadBooks();
+  } catch (err) {
+    alert(err.message || 'Failed to add book');
+    console.error(err);
+  }
+});
+
 async function loadBooksByPrice() {
   const booksDiv = document.getElementById('booksByPrice');
   try {
     const books = await apiRequest('/books/aggregate/price-desc', 'GET', null, token);
-
     if (!books || books.length === 0) {
       booksDiv.innerHTML = '<p>No books found</p>';
       return;
     }
 
-    let html = `
-      <h3 class="mb-3">Books by Price (High → Low)</h3>
+    let html = `<h3 class="mb-3">Books by Price (High → Low)</h3>
       <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Price</th>
-            <th>Stock</th>
-          </tr>
-        </thead>
-        <tbody>`;
+      <thead><tr><th>Title</th><th>Author</th><th>Price</th><th>Stock</th></tr></thead><tbody>`;
 
     books.forEach(b => {
-      html += `
-        <tr>
-          <td>${b.title}</td>
-          <td>${b.author}</td>
-          <td>$${b.price.toFixed(2)}</td>
-          <td>${b.stock}</td>
-        </tr>`;
+      html += `<tr>
+        <td>${b.title}</td>
+        <td>${b.author}</td>
+        <td>$${b.price.toFixed(2)}</td>
+        <td>${b.stock}</td>
+      </tr>`;
     });
 
     html += '</tbody></table>';
@@ -271,3 +235,13 @@ async function loadBooksByPrice() {
     console.error(e);
   }
 }
+
+(async () => {
+  const isAdmin = await checkAdmin();
+  if (!isAdmin) return;
+
+  loadUsers();
+  loadOrders();
+  loadBooks();
+  loadBooksByPrice();
+})();

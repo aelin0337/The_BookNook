@@ -46,67 +46,28 @@ export const getOrderById = async (req, res) => {
 };
 export const createOrder = async (req, res) => {
   try {
-    console.log('CREATE ORDER BODY:', req.body);
-    console.log('USER:', req.user);
+    const userId = req.user._id;
+    const { items, totalAmount } = req.body;
 
-    for (const item of req.body.items) {
-      if (!mongoose.Types.ObjectId.isValid(item.bookId)) {
-        return res.status(400).json({
-          message: "Incorrect bookId",
-          bookId: item.bookId
-        });
-      }
+    if (!items || !items.length) {
+      return res.status(400).json({ message: "Cart is empty" });
     }
 
     const order = new Order({
-      userId: req.user._id,
-      items: req.body.items,
-      totalAmount: req.body.totalAmount,
+      userId,
+      items,
+      totalAmount,
       status: "pending",
     });
 
     await order.save();
     res.status(201).json(order);
-  } catch (error) {
-    console.error('CREATE ORDER ERROR:', error);
-    res.status(500).json({ 
-      message: "Error creating order",
-      error: error.message
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to create order" });
   }
 };
 
-export const updateOrderStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-
-    if (!status) {
-      return res.status(400).json({
-        message: "Status is required",
-      });
-    }
-
-    const order = await Order.findOne({ _id: req.params.id });
-    if (!order) {
-      return res.status(404).json({
-        message: "Order not found",
-      });
-    }
-
-    order.status = status;
-    await order.save();
-
-    res.json({
-      message: "Status uploaded",
-      order,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error updating order status",
-      error: error.message,
-    });
-  }
-};
 export const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);

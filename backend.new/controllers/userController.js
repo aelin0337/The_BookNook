@@ -2,16 +2,25 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
-export const registerUser = async (req, res) => {
+function generateId() {
+  return Math.random().toString(36).substring(2, 10);
+}
+
+export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already used" });
+      return res.status(400).json({ message: "Email already exists" });
     }
 
     const user = new User({
+      _id: generateId(),
       name,
       email,
       passwordHash: password,
@@ -20,14 +29,13 @@ export const registerUser = async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({ message: "User registered", userId: user._id });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error registering user",
-      error: error.message,
-    });
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Registration failed" });
   }
 };
+
 
 export const login = async (req, res) => {
   try {

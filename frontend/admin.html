@@ -25,7 +25,7 @@
         <a href="index.html" class="active">Home</a>
         <a href="profile.html">Profile</a>
         <a href="orders.html">Orders</a>
-        <a href="card.html">Cart</a>
+        <a href="cart.html">Cart</a>
         <a href="shop.html">Genres</a>
         <a href="admin.html" id="adminLink" class="d-none">Admin</a>
       </div>
@@ -44,8 +44,44 @@
     </section>
 
     <section class="mb-5">
+      <h3 class="mb-3">Orders</h3>
+      <div id="orders"></div>
+    </section>
+
+    <section class="mb-5">
       <div id="booksByPrice"></div>
     </section>
+
+    <section class="mb-5">
+  <h3 class="mb-3">Add new book</h3>
+
+  <form id="addBookForm" class="mb-4">
+  <div class="row g-2">
+    <div class="col">
+      <input type="text" class="form-control" id="bookTitle" placeholder="Title" required>
+    </div>
+    <div class="col">
+      <input type="text" class="form-control" id="bookAuthor" placeholder="Author" required>
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" id="bookPrice" placeholder="Price" required>
+    </div>
+    <div class="col">
+      <input type="text" class="form-control" id="bookGenre" placeholder="Genre ID" required>
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" id="bookStock" placeholder="Stock" required>
+    </div>
+    <div class="col">
+      <button class="btn btn-success w-100">Add</button>
+    </div>
+  </div>
+</form>
+
+
+  <h3 class="mb-3">Books</h3>
+  <div id="books"></div>
+</section>
 
     <section class="mb-5">
       <h3 class="mb-3">Books</h3>

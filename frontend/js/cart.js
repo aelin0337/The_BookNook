@@ -1,3 +1,4 @@
+import { apiRequest } from "./api.js";
 const cartContainer = document.getElementById('cart-container');
 const checkoutBtn = document.getElementById('checkout');
 
@@ -100,12 +101,41 @@ function removeFromCart(id) {
   loadCart();
 }
 
-checkoutBtn.addEventListener('click', () => {
+checkoutBtn.addEventListener('click', async () => {
   if (!confirm('Do you want to place this order?')) return;
 
-  localStorage.removeItem('cart');
-  alert('Your order has been placed successfully!');
-  loadCart();
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const token = localStorage.getItem('token');
+
+  if (!token) return alert("Not logged in");
+  if (!cart.length) return alert("Cart empty");
+
+  const items = cart.map(item => ({
+    bookId: item._id,
+    priceAtPurchase: item.price,
+    quantity: item.quantity,
+  }));
+
+  const totalAmount = cart.reduce(
+    (sum, i) => sum + i.price * i.quantity,
+    0
+  );
+
+  try {
+    await apiRequest(
+      "/orders",
+      "POST",
+      { items, totalAmount },
+      token
+    );
+
+    localStorage.removeItem('cart');
+    alert('Your order has been placed successfully!');
+    loadCart();
+  } catch (e) {
+    alert("Failed to place order");
+    console.error(e);
+  }
 });
 
 loadCart();
