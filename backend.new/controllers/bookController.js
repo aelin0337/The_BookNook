@@ -35,19 +35,6 @@ export const getBookById = async (req, res) => {
   }
 };
 
-// Import books from JSON file
-export const importBooksFromJSON = async (req, res) => {
-  try {
-    const filePath = path.resolve("backend/data/books.json");
-    const data = fs.readFileSync(filePath, "utf-8");
-    const books = JSON.parse(data);
-
-    await Book.insertMany(books);
-    res.json({ message: "Books uploaded successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error loading books", error: error.message });
-  }
-};
 // POST /books
 export const createBook = async (req, res) => {
   try {

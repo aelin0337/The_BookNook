@@ -1,7 +1,7 @@
 import express from "express";
 import Book from '../models/Book.js';
 import { authMiddleware, adminOnly } from "../middleware/authMiddleware.js";
-import { getAllBooks, getBookById, importBooksFromJSON} from "../controllers/bookController.js";
+import { getAllBooks, getBookById} from "../controllers/bookController.js";
 import { createBook, updateBook, deleteBook } from "../controllers/bookController.js";
 
 const router = express.Router();
@@ -30,6 +30,5 @@ router.put("/:id", authMiddleware, adminOnly, updateBook);
 router.delete("/:id", authMiddleware, adminOnly, deleteBook);
 router.get("/", getAllBooks);
 router.get("/:id", getBookById);
-router.post("/import", importBooksFromJSON);
 
 export default router;
